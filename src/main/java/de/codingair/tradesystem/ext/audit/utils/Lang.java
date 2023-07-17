@@ -1,6 +1,6 @@
-package de.codingair.tradesystem.ext.auditing.utils;
+package de.codingair.tradesystem.ext.audit.utils;
 
-import de.codingair.tradesystem.ext.auditing.TradeAuditing;
+import de.codingair.tradesystem.ext.audit.TradeAudit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,7 +15,7 @@ public class Lang extends de.codingair.tradesystem.spigot.utils.Lang {
         try {
             return get(key, null, placeholders);
         } catch (NullPointerException ex) {
-            return get(TradeAuditing.getInstance().getFileManager(), key, p, placeholders);
+            return get(TradeAudit.getInstance().getFileManager(), key, p, placeholders);
         }
     }
 

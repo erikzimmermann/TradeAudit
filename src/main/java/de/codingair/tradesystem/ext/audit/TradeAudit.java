@@ -1,13 +1,13 @@
-package de.codingair.tradesystem.ext.auditing;
+package de.codingair.tradesystem.ext.audit;
 
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.files.FileManager;
-import de.codingair.tradesystem.ext.auditing.utils.Lang;
+import de.codingair.tradesystem.ext.audit.utils.Lang;
 import org.bukkit.event.EventHandler;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class TradeAuditing extends JavaPlugin {
-    private static TradeAuditing instance;
+public class TradeAudit extends JavaPlugin {
+    private static TradeAudit instance;
     private final FileManager fileManager = new FileManager(this);
 
     @EventHandler
@@ -30,7 +30,7 @@ public class TradeAuditing extends JavaPlugin {
         Lang.checkLanguageKeys(this, fileManager);
     }
 
-    public static TradeAuditing getInstance() {
+    public static TradeAudit getInstance() {
         return instance;
     }
 

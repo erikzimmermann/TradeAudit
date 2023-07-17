@@ -2,8 +2,12 @@ name: TradeAuditing
 author: CodingAir
 version: "${project.version}"
 description: Audit trades with ease.
-main: de.codingair.tradesystem.ext.auditing.TradeAuditing
+main: de.codingair.tradesystem.ext.audit.TradeAudit
 depend: [TradeSystem]
 load-after: [TradeSystem]
 
 api-version: "1.13"
+
+permissions:
+  tradesystem.auditing.notify:
+    default: op

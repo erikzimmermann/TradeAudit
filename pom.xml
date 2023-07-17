@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.codingair</groupId>
-    <artifactId>TradeAuditing</artifactId>
+    <artifactId>TradeAudit</artifactId>
     <version>1.0.0</version>
 
     <properties>
