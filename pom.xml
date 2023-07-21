@@ -16,7 +16,7 @@
     </properties>
 
     <build>
-        <finalName>TradeRep_v${project.version}</finalName>
+        <finalName>TradeAudit_v${project.version}</finalName>
 
         <plugins>
             <plugin>
@@ -72,6 +72,12 @@
             <groupId>com.github.CodingAir</groupId>
             <artifactId>CodingAPI</artifactId>
             <version>1.71</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.CodingAir</groupId>
+            <artifactId>PacketManagement</artifactId>
+            <version>1.18</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

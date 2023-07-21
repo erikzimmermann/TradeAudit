@@ -1,4 +1,4 @@
-name: TradeAuditing
+name: TradeAudit
 author: CodingAir
 version: "${project.version}"
 description: Audit trades with ease.
