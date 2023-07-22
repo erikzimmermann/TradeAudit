@@ -47,8 +47,8 @@ public class TradeItemListener implements Listener {
                 // TODO: proxy trade: missing support yet!
                 return gui.getInventory();
             } else return gui.getTrade().getGUIs()[0].getInventory();
-
         };
+
         configuration.targetSlots = e -> {
             if (e instanceof InventoryClickEvent) {
                 InventoryClickEvent event = (InventoryClickEvent) e;
@@ -74,6 +74,7 @@ public class TradeItemListener implements Listener {
             } else
                 throw new IllegalArgumentException("Unsupported event type: " + e.getClass().getName());
         };
+
         configuration.isItemAllowedInInventory = (items, targetSlots) -> {
             for (ItemStack item : items) {
                 if (TradeSystem.getInstance().getTradeManager().isBlocked(gui.getTrade(), item)) {

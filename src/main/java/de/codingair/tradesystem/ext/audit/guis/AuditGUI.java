@@ -27,7 +27,7 @@ import java.lang.reflect.Method;
 public class AuditGUI extends GUI implements PlayerSubscriber {
     private final Trade trade;
 
-    public AuditGUI(Trade trade, Player player) {
+    public AuditGUI(@NotNull Trade trade, @NotNull Player player) {
         super(player, TradeAudit.getInstance(), false);
         this.trade = trade;
 
@@ -53,8 +53,8 @@ public class AuditGUI extends GUI implements PlayerSubscriber {
     @Override
     public void run() {
         getActive().setTitle(buildTitle()); // update title for deployment
-        updateItems();
-        applyTradeIconChanges();
+        updateItems();                      // update items
+        applyTradeIconChanges();            // update icon data
         updateTradeIcons();                 // deploy everything
     }
 
@@ -103,30 +103,14 @@ public class AuditGUI extends GUI implements PlayerSubscriber {
         }
     }
 
-    private void informTransition(TradeIcon icon, TradeIcon consumer) {
+    private void informTransition(@NotNull TradeIcon icon, @NotNull TradeIcon consumer) {
         try {
-            Method method = findInform(icon.getClass(), icon.getClass());
+            Method method = IconHandler.findInform(icon.getClass(), icon.getClass());
 
             method.invoke(icon, consumer);
         } catch (ClassCastException | InvocationTargetException | IllegalAccessException | NoSuchMethodException ex) {
             throw new IllegalStateException("Cannot execute method inform(TradeIcon) of " + icon.getClass().getName(), ex);
         }
-    }
-
-    private @NotNull Method findInform(Class<? extends TradeIcon> origin, Class<? extends TradeIcon> icon) throws NoSuchMethodException {
-        try {
-            return icon.getMethod("inform", IconHandler.getTransitionTarget(origin));
-        } catch (NoSuchMethodException ignored) {
-        }
-
-        //might be a generic
-        try {
-            return icon.getMethod("inform", TradeIcon.class);
-        } catch (NoSuchMethodException ignored) {
-        }
-
-        //transition without transition method?
-        throw new NoSuchMethodException();
     }
 
     @Override
