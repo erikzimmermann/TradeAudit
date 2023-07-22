@@ -6,7 +6,7 @@
 
     <groupId>de.codingair</groupId>
     <artifactId>TradeAudit</artifactId>
-    <version>1.0.0</version>
+    <version>0.1.0</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -48,6 +48,18 @@
                 </executions>
             </plugin>
         </plugins>
+
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+                <targetPath>.</targetPath>
+                <filtering>true</filtering>
+                <includes>
+                    <include>*</include>
+                    <include>*/**</include>
+                </includes>
+            </resource>
+        </resources>
     </build>
 
     <repositories>
