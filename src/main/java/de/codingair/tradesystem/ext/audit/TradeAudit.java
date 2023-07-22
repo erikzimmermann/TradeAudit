@@ -6,10 +6,10 @@ import de.codingair.codingapi.API;
 import de.codingair.codingapi.files.FileManager;
 import de.codingair.tradesystem.ext.audit.commands.CAudit;
 import de.codingair.tradesystem.ext.audit.guis.AuditGUI;
-import de.codingair.tradesystem.ext.audit.guis.AuditPage;
 import de.codingair.tradesystem.ext.audit.listeners.TradeCloseListener;
 import de.codingair.tradesystem.ext.audit.listeners.TradeItemListener;
 import de.codingair.tradesystem.ext.audit.listeners.TradeStartListener;
+import de.codingair.tradesystem.spigot.TradeSystem;
 import de.codingair.tradesystem.spigot.utils.Lang;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
@@ -30,6 +30,8 @@ public class TradeAudit extends JavaPlugin {
 
     @EventHandler
     public void onEnable() {
+        if (checkTradeSystem()) return;
+
         instance = this;
         API.getInstance().onEnable(this);
 
@@ -40,7 +42,31 @@ public class TradeAudit extends JavaPlugin {
 
     @EventHandler
     public void onDisable() {
-        API.getInstance().onDisable(this);
+        if (instance != null) API.getInstance().onDisable(this);
+    }
+
+    private boolean checkTradeSystem() {
+        TradeSystem tradeSystem = (TradeSystem) Bukkit.getPluginManager().getPlugin("TradeSystem");
+        if (tradeSystem == null) return true;
+
+        boolean supported;
+        try {
+            String name = getDescription().getName().toLowerCase();
+            supported = de.codingair.tradesystem.spigot.ext.Extensions.get().containsKey(name);
+        } catch (Throwable t) {
+            supported = false;
+        }
+
+        if (!supported) {
+            getLogger().severe("The current version of TradeSystem "
+                    + "(v" + tradeSystem.getDescription().getVersion() + ") does not support "
+                    + getDescription().getName() + " yet! "
+                    + "Please update TradeSystem to the latest version to use this extension.");
+            getLogger().severe("At least required: TradeSystem v2.3.3_Hotfix-1");  // TODO: change to v2.4.0
+            Bukkit.getPluginManager().disablePlugin(this);
+        }
+
+        return !supported;
     }
 
     private void loadConfigFiles() {
