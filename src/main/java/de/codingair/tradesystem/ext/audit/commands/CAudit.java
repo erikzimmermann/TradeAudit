@@ -11,6 +11,7 @@ import de.codingair.codingapi.server.commands.builder.special.MultiCommandCompon
 import de.codingair.tradesystem.ext.audit.TradeAudit;
 import de.codingair.tradesystem.ext.audit.guis.AuditGUI;
 import de.codingair.tradesystem.ext.audit.utils.Messages;
+import de.codingair.tradesystem.ext.audit.utils.Permissions;
 import de.codingair.tradesystem.spigot.TradeSystem;
 import de.codingair.tradesystem.spigot.trade.Trade;
 import de.codingair.tradesystem.spigot.trade.gui.layout.utils.Perspective;
@@ -23,7 +24,7 @@ import java.util.List;
 
 public class CAudit extends CommandBuilder {
     public CAudit() {
-        super(TradeAudit.getInstance(), "audit", new BaseComponent() {
+        super(TradeAudit.getInstance(), "audit", new BaseComponent(Permissions.TRADE_AUDIT.getPermission()) {
             @Override
             public void noPermission(CommandSender sender, String s, CommandComponent commandComponent) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permissions"));

@@ -21,7 +21,7 @@ public class TradeStartListener implements Listener {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 if (player.getName().equals(e.getSender()) || player.getName().equals(e.getReceiver())) continue;
 
-                if (Permissions.NOTIFY.hasPermission(player)
+                if (Permissions.TRADE_NOTIFY.hasPermission(player)
                         && !TradeAudit.getInstance().getMuted().contains(player.getUniqueId())) {
                     message.send(player);
                 }

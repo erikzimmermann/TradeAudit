@@ -9,5 +9,12 @@ load-after: [TradeSystem]
 api-version: "1.13"
 
 permissions:
-  tradesystem.auditing.notify:
+  tradesystem.audit.updates.notify:
     default: op
+    description: "Notify admins when a new update is available."
+  tradesystem.audit.notify:
+    default: op
+    description: "Notify admins when players start a trade."
+  tradesystem.audit.start:
+    default: op
+    description: "Enable admins to use the /audit command."
