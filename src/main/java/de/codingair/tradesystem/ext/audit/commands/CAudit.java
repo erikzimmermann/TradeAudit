@@ -77,6 +77,7 @@ public class CAudit extends CommandBuilder {
                 try {
                     AuditGUI gui = new AuditGUI(trade, (Player) sender);
                     gui.open();
+                    TradeSystem.handler().playStartSound(gui.getPlayer());
 
                     TradeAudit.getInstance().getAudits().put(trade.getUniqueId(Perspective.PRIMARY), sender.getName(), gui);
                 } catch (AlreadyOpenedException | NoPageException | IsWaitingException e) {
