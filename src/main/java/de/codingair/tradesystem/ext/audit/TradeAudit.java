@@ -70,8 +70,6 @@ public class TradeAudit extends JavaPlugin {
     }
 
     private void loadConfigFiles() {
-        this.fileManager.loadFile("Config", "/");
-
         Lang.init(this, fileManager);
     }
 
