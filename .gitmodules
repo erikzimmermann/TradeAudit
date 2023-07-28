@@ -1,0 +1,3 @@
+[submodule "TradeSystem"]
+	path = TradeSystem
+	url = https://github.com/erikzimmermann/TradeSystem
