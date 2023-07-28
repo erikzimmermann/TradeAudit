@@ -9,7 +9,6 @@ import de.codingair.codingapi.player.gui.inventory.v2.exceptions.NoPageException
 import de.codingair.tradesystem.ext.audit.TradeAudit;
 import de.codingair.tradesystem.spigot.TradeSystem;
 import de.codingair.tradesystem.spigot.trade.Trade;
-import de.codingair.tradesystem.spigot.trade.gui.TradingGUI;
 import de.codingair.tradesystem.spigot.trade.gui.layout.TradeLayout;
 import de.codingair.tradesystem.spigot.trade.gui.layout.registration.IconHandler;
 import de.codingair.tradesystem.spigot.trade.gui.layout.types.TradeIcon;
@@ -63,14 +62,12 @@ public class AuditGUI extends GUI implements PlayerSubscriber {
     }
 
     private void updateItems() {
-        TradingGUI[] guis = trade.getGUIs();
         for (int i = 0; i < trade.getSlots().size(); i++) {
             int slot = trade.getSlots().get(i);
             int otherSlot = trade.getOtherSlots().get(i);
 
-            setItem(slot, guis[0].getItem(slot));
-            // TODO: add TradeProxy support
-            setItem(otherSlot, guis[1].getItem(slot));
+            setItem(slot, trade.getCurrentOfferedItem(Perspective.PRIMARY, i));
+            setItem(otherSlot, trade.getCurrentOfferedItem(Perspective.SECONDARY, i));
         }
     }
 
