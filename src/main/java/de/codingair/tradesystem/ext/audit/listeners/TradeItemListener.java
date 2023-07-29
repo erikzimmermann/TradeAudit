@@ -9,6 +9,7 @@ import de.codingair.tradesystem.ext.audit.guis.AuditGUI;
 import de.codingair.tradesystem.spigot.TradeSystem;
 import de.codingair.tradesystem.spigot.trade.Trade;
 import de.codingair.tradesystem.spigot.trade.gui.Actions;
+import de.codingair.tradesystem.spigot.trade.gui.InventoryMask;
 import de.codingair.tradesystem.spigot.trade.gui.layout.shulker.ShulkerPeekGUI;
 import de.codingair.tradesystem.spigot.trade.gui.layout.utils.Perspective;
 import de.codingair.tradesystem.spigot.utils.Lang;
@@ -21,6 +22,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -32,42 +34,60 @@ public class TradeItemListener implements Listener {
     private Actions.Configuration getConfiguration(@NotNull AuditGUI gui) {
         Player player = gui.getPlayer();
         Actions.Configuration configuration = Actions.Configuration.DEFAULT();
+        Trade trade = gui.getTrade();
 
         // performance improvement with HashSet
-        Set<Integer> slots = new HashSet<>(gui.getTrade().getSlots());
-        Set<Integer> otherSlots = new HashSet<>(gui.getTrade().getOtherSlots());
+        Set<Integer> slots = new HashSet<>(trade.getSlots());
+        Set<Integer> otherSlots = new HashSet<>(trade.getOtherSlots());
 
         configuration.inventoryMapper = (event, slot) -> {
             if (otherSlots.contains(slot)) {
-                if (gui.getTrade().getGUIs()[1] != null) {
+                if (trade.getGUIs()[1] != null) {
                     // bukkit trade
-                    return gui.getTrade().getGUIs()[1].getInventory();
+                    return InventoryMask.of(trade.getGUIs()[1].getInventory());
                 }
 
-                // TODO: proxy trade: missing support yet!
-                return gui.getInventory();
-            } else return gui.getTrade().getGUIs()[0].getInventory();
+                return new InventoryMask() {
+                    @Override
+                    public void setItem(int slot, @Nullable ItemStack item) {
+                        // slot was already mapped to primary perspective
+                        int slotId = trade.getSlots().indexOf(slot);
+                        if (slotId == -1)
+                            throw new IllegalStateException("Slot " + slot + " is not part of the trade.");
+                        trade.updateDisplayItem(Perspective.PRIMARY, slotId, item);
+                    }
+
+                    @Override
+                    public @Nullable ItemStack getItem(int slot) {
+                        // slot was already mapped to primary perspective
+                        int slotId = trade.getSlots().indexOf(slot);
+                        if (slotId == -1)
+                            throw new IllegalStateException("Slot " + slot + " is not part of the trade.");
+                        return trade.getCurrentOfferedItem(Perspective.SECONDARY, slotId);
+                    }
+
+                    @Override
+                    public @NotNull Object getHolder() {
+                        return trade;
+                    }
+                };
+            } else return InventoryMask.of(trade.getGUIs()[0].getInventory());
         };
 
         configuration.targetSlots = e -> {
             if (e instanceof InventoryClickEvent) {
                 InventoryClickEvent event = (InventoryClickEvent) e;
 
-                if (slots.contains(event.getRawSlot())) return gui.getTrade().getSlots();
-                if (otherSlots.contains(event.getRawSlot())) {
-                    // TODO: proxy trade: missing support yet!
-                    if (gui.getTrade().getGUIs()[1] != null) {
-                        return gui.getTrade().getOtherSlots();
-                    }
-                }
+                if (slots.contains(event.getRawSlot())) return trade.getSlots();
+                if (otherSlots.contains(event.getRawSlot())) return trade.getOtherSlots();
 
                 // player should only interact with bottom inventory (MOVE_TO_OTHER_INVENTORY should be cancelled)
                 return Collections.emptyList();
             } else if (e instanceof InventoryDragEvent) {
                 InventoryDragEvent event = (InventoryDragEvent) e;
 
-                if (slots.containsAll(event.getNewItems().keySet())) return gui.getTrade().getSlots();
-                if (otherSlots.containsAll(event.getNewItems().keySet())) return gui.getTrade().getOtherSlots();
+                if (slots.containsAll(event.getNewItems().keySet())) return trade.getSlots();
+                if (otherSlots.containsAll(event.getNewItems().keySet())) return trade.getOtherSlots();
 
                 // player should only interact with bottom inventory
                 return Collections.emptyList();
@@ -77,7 +97,7 @@ public class TradeItemListener implements Listener {
 
         configuration.isItemAllowedInInventory = (items, targetSlots) -> {
             for (ItemStack item : items) {
-                if (TradeSystem.getInstance().getTradeManager().isBlocked(gui.getTrade(), item)) {
+                if (TradeSystem.getInstance().getTradeManager().isBlocked(trade, item)) {
                     player.sendMessage(Lang.getPrefix() + Lang.get("Trade_Placed_Blocked_Item", player));
                     TradeSystem.getInstance().getTradeManager().playBlockSound(player);
                     return false;
@@ -91,7 +111,7 @@ public class TradeItemListener implements Listener {
             else perspective = Perspective.TERTIARY;
 
             if (perspective.isMain()) {
-                if (!TradeSystem.getInstance().getTradeManager().isDropItems() && !gui.getTrade().fitsTrade(perspective, items)) {
+                if (!TradeSystem.getInstance().getTradeManager().isDropItems() && !trade.fitsTrade(perspective, items)) {
                     player.sendMessage(Lang.getPrefix() + Lang.get("Trade_Partner_No_Space", player));
                     TradeSystem.getInstance().getTradeManager().playBlockSound(player);
                     return false;
@@ -103,8 +123,8 @@ public class TradeItemListener implements Listener {
         configuration.collectFromBothInventories = false;
         configuration.slotMapper = slot -> {
             if (otherSlots.contains(slot)) {
-                int idx = gui.getTrade().getOtherSlots().indexOf(slot);
-                return gui.getTrade().getSlots().get(idx);
+                int idx = trade.getOtherSlots().indexOf(slot);
+                return trade.getSlots().get(idx);
             }
 
             return slot;
