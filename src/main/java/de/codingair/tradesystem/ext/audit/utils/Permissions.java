@@ -1,6 +1,5 @@
 package de.codingair.tradesystem.ext.audit.utils;
 
-import de.codingair.tradesystem.spigot.TradeSystem;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,12 +31,12 @@ public enum Permissions {
      * @return The permission node if permissions are enable in the config.
      */
     public @Nullable String getPermission() {
-        if (admin || TradeSystem.getInstance().arePermissionsEnabled()) return permission;
+        if (admin || de.codingair.tradesystem.spigot.utils.Permissions.arePermissionsEnabled()) return permission;
         return null;
     }
 
     public boolean hasPermission(@NotNull Player player) {
-        if (TradeSystem.getInstance().arePermissionsEnabled()) return player.hasPermission(permission);
+        if (de.codingair.tradesystem.spigot.utils.Permissions.arePermissionsEnabled()) return player.hasPermission(permission);
         else return !admin;
     }
 }
