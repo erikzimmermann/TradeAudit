@@ -62,7 +62,7 @@ public class TradeAudit extends JavaPlugin {
                     + "(v" + tradeSystem.getDescription().getVersion() + ") does not support "
                     + getDescription().getName() + " yet! "
                     + "Please update TradeSystem to the latest version to use this extension.");
-            getLogger().severe("At least required: TradeSystem v2.3.3_Hotfix-1");  // TODO: change to v2.4.0
+            getLogger().severe("At least required: TradeSystem v2.4.0");
             Bukkit.getPluginManager().disablePlugin(this);
         }
 
