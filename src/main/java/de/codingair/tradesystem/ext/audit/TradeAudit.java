@@ -4,17 +4,23 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import de.codingair.codingapi.API;
 import de.codingair.codingapi.files.FileManager;
+import de.codingair.codingapi.utils.Value;
 import de.codingair.tradesystem.ext.audit.commands.CAudit;
 import de.codingair.tradesystem.ext.audit.guis.AuditGUI;
 import de.codingair.tradesystem.ext.audit.listeners.TradeCloseListener;
 import de.codingair.tradesystem.ext.audit.listeners.TradeItemListener;
 import de.codingair.tradesystem.ext.audit.listeners.TradeStartListener;
+import de.codingair.tradesystem.ext.audit.listeners.UpdateListener;
+import de.codingair.tradesystem.ext.audit.utils.Permissions;
 import de.codingair.tradesystem.spigot.TradeSystem;
 import de.codingair.tradesystem.spigot.utils.Lang;
+import de.codingair.tradesystem.spigot.utils.updates.UpdateNotifier;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,12 +34,17 @@ public class TradeAudit extends JavaPlugin {
     private final Table<UUID, String, AuditGUI> audits = HashBasedTable.create();
     private final Set<UUID> muted = new HashSet<>();
 
+    private final UpdateNotifier updateNotifier = new UpdateNotifier(getDescription().getVersion(), "TradeAudit", 111665);
+    private boolean needsUpdate = false;
+
     @EventHandler
     public void onEnable() {
         if (checkTradeSystem()) return;
 
         instance = this;
         API.getInstance().onEnable(this);
+
+        startUpdateNotifier();
 
         loadConfigFiles();
         loadCommands();
@@ -43,6 +54,43 @@ public class TradeAudit extends JavaPlugin {
     @EventHandler
     public void onDisable() {
         if (instance != null) API.getInstance().onDisable(this);
+    }
+
+    private void startUpdateNotifier() {
+        Value<BukkitTask> task = new Value<>(null);
+        Runnable runnable = () -> {
+            needsUpdate = updateNotifier.read();
+
+            if (needsUpdate) {
+                getLogger().info("-----< TradeAudit >-----");
+                getLogger().info("New update available [" + updateNotifier.getUpdateInfo() + "].");
+                getLogger().info("You are " + updateNotifier.getReleasesBehind() + " release(s) behind.");
+                getLogger().info("Download it on\n\n" + updateNotifier.getDownloadLink() + "\n");
+                getLogger().info("------------------------");
+
+                task.getValue().cancel();
+
+                notifyPlayers(null);
+            }
+        };
+
+        task.setValue(Bukkit.getScheduler().runTaskTimerAsynchronously(getInstance(), runnable, 20L * 60 * 60, 20L * 60 * 60)); //check every hour on GitHub
+    }
+
+    public void notifyPlayers(@Nullable Player player) {
+        if (player == null) {
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                notifyPlayers(p);
+            }
+        } else {
+            if (needsUpdate && Permissions.NOTIFY.hasPermission(player)) {
+                player.sendMessage("");
+                player.sendMessage("");
+                player.sendMessage(Lang.getPrefix() + "§7A §anew update §7for §aTradeAudit §7is available §8[§b" + updateNotifier.getUpdateInfo() + "§8]§7. You are §a" + updateNotifier.getReleasesBehind() + "§7 release(s) behind. Download it on §b§n" + this.updateNotifier.getDownloadLink());
+                player.sendMessage("");
+                player.sendMessage("");
+            }
+        }
     }
 
     private boolean checkTradeSystem() {
@@ -81,6 +129,7 @@ public class TradeAudit extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new TradeItemListener(), this);
         Bukkit.getPluginManager().registerEvents(new TradeStartListener(), this);
         Bukkit.getPluginManager().registerEvents(new TradeCloseListener(), this);
+        Bukkit.getPluginManager().registerEvents(new UpdateListener(), this);
     }
 
     public static TradeAudit getInstance() {
