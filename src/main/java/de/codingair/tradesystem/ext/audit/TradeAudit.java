@@ -6,11 +6,10 @@ import de.codingair.codingapi.API;
 import de.codingair.codingapi.files.FileManager;
 import de.codingair.codingapi.utils.Value;
 import de.codingair.tradesystem.ext.audit.commands.CAudit;
+import de.codingair.tradesystem.ext.audit.external.PluginDependencies;
 import de.codingair.tradesystem.ext.audit.guis.AuditGUI;
-import de.codingair.tradesystem.ext.audit.listeners.TradeCloseListener;
-import de.codingair.tradesystem.ext.audit.listeners.TradeItemListener;
-import de.codingair.tradesystem.ext.audit.listeners.TradeStartListener;
-import de.codingair.tradesystem.ext.audit.listeners.UpdateListener;
+import de.codingair.tradesystem.ext.audit.listeners.*;
+import de.codingair.tradesystem.ext.audit.metrics.MetricsService;
 import de.codingair.tradesystem.ext.audit.utils.Permissions;
 import de.codingair.tradesystem.spigot.TradeSystem;
 import de.codingair.tradesystem.spigot.utils.Lang;
@@ -34,6 +33,8 @@ public class TradeAudit extends JavaPlugin {
     private final Table<UUID, String, AuditGUI> audits = HashBasedTable.create();
     private final Set<UUID> muted = new HashSet<>();
 
+    private MetricsService metricsService;
+
     private final UpdateNotifier updateNotifier = new UpdateNotifier(getDescription().getVersion(), "TradeAudit", 111665);
     private boolean needsUpdate = false;
 
@@ -47,13 +48,37 @@ public class TradeAudit extends JavaPlugin {
         startUpdateNotifier();
 
         loadConfigFiles();
+        loadServices();
         loadCommands();
         loadListeners();
+
+        PluginDependencies.enable();
     }
 
     @EventHandler
     public void onDisable() {
+        PluginDependencies.disable();
         if (instance != null) API.getInstance().onDisable(this);
+    }
+
+    private void loadConfigFiles() {
+        Lang.init(this, fileManager);
+    }
+
+    private void loadServices() {
+        this.metricsService = new MetricsService();
+    }
+
+    private void loadCommands() {
+        new CAudit().register();
+    }
+
+    private void loadListeners() {
+        Bukkit.getPluginManager().registerEvents(new TradeItemListener(), this);
+        Bukkit.getPluginManager().registerEvents(new TradeStartListener(), this);
+        Bukkit.getPluginManager().registerEvents(new TradeCloseListener(), this);
+        Bukkit.getPluginManager().registerEvents(new UpdateListener(), this);
+        Bukkit.getPluginManager().registerEvents(new MetricsListener(), this);
     }
 
     private void startUpdateNotifier() {
@@ -117,29 +142,17 @@ public class TradeAudit extends JavaPlugin {
         return !supported;
     }
 
-    private void loadConfigFiles() {
-        Lang.init(this, fileManager);
-    }
-
-    private void loadCommands() {
-        new CAudit().register();
-    }
-
-    private void loadListeners() {
-        Bukkit.getPluginManager().registerEvents(new TradeItemListener(), this);
-        Bukkit.getPluginManager().registerEvents(new TradeStartListener(), this);
-        Bukkit.getPluginManager().registerEvents(new TradeCloseListener(), this);
-        Bukkit.getPluginManager().registerEvents(new UpdateListener(), this);
-    }
-
+    @NotNull
     public static TradeAudit getInstance() {
         return instance;
     }
 
+    @NotNull
     public FileManager getFileManager() {
         return fileManager;
     }
 
+    @NotNull
     public Table<UUID, String, AuditGUI> getAudits() {
         return audits;
     }
@@ -149,7 +162,13 @@ public class TradeAudit extends JavaPlugin {
         return getAudits().column(player.getName()).values().stream().findAny().orElse(null);
     }
 
+    @NotNull
     public Set<UUID> getMuted() {
         return muted;
+    }
+
+    @NotNull
+    public MetricsService getMetricsService() {
+        return metricsService;
     }
 }

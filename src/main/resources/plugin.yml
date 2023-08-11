@@ -4,6 +4,7 @@ version: "${project.version}"
 description: Audit trades with ease.
 main: de.codingair.tradesystem.ext.audit.TradeAudit
 depend: [TradeSystem]
+softdepend: [MMOItems]
 load-after: [TradeSystem]
 
 api-version: "1.13"
