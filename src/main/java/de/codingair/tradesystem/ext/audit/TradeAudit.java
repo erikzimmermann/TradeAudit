@@ -8,7 +8,11 @@ import de.codingair.codingapi.utils.Value;
 import de.codingair.tradesystem.ext.audit.commands.CAudit;
 import de.codingair.tradesystem.ext.audit.external.PluginDependencies;
 import de.codingair.tradesystem.ext.audit.guis.AuditGUI;
-import de.codingair.tradesystem.ext.audit.listeners.*;
+import de.codingair.tradesystem.ext.audit.listeners.TradeCloseListener;
+import de.codingair.tradesystem.ext.audit.listeners.TradeItemListener;
+import de.codingair.tradesystem.ext.audit.listeners.TradeStartListener;
+import de.codingair.tradesystem.ext.audit.listeners.UpdateListener;
+import de.codingair.tradesystem.ext.audit.metrics.MetricsListener;
 import de.codingair.tradesystem.ext.audit.metrics.MetricsService;
 import de.codingair.tradesystem.ext.audit.utils.Permissions;
 import de.codingair.tradesystem.spigot.TradeSystem;
@@ -66,7 +70,7 @@ public class TradeAudit extends JavaPlugin {
     }
 
     private void loadServices() {
-        this.metricsService = new MetricsService();
+        metricsService = new MetricsService();
     }
 
     private void loadCommands() {

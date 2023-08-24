@@ -8,12 +8,19 @@ public class CreateMetricsTableMigration implements Migration {
     public @NotNull String getStatement() {
         return "CREATE TABLE IF NOT EXISTS trade_metrics ("
                 + "	id INT PRIMARY KEY AUTO_INCREMENT,"
-                + "	sender VARCHAR(36) NOT NULL,"
-                + "	receiver VARCHAR(36) NOT NULL,"
+                + "	sender INT NOT NULL,"
+                + "	sender_server VARCHAR(75),"
+                + "	sender_world VARCHAR(75) NOT NULL,"
+                + "	receiver INT NOT NULL,"
+                + "	receiver_server VARCHAR(75),"
+                + "	receiver_world VARCHAR(75) NOT NULL,"
                 + "	category VARCHAR(50) NOT NULL,"
                 + "	type VARCHAR(50) NOT NULL,"
                 + "	specification TEXT,"
                 + "	quantity TEXT NOT NULL,"
-                + " date DATETIME NOT NULL DEFAULT NOW());";
+                + " date DATETIME NOT NULL DEFAULT NOW(),"
+                + " FOREIGN KEY (sender) REFERENCES trade_players(id) ON DELETE RESTRICT,"
+                + " FOREIGN KEY (receiver) REFERENCES trade_players(id) ON DELETE RESTRICT"
+                + ");";
     }
 }

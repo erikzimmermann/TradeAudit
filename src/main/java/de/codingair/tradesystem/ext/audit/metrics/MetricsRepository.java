@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public interface MetricsRepository {
 
-    void log(@NotNull UUID sender, @NotNull UUID receiver, @NotNull String category, @NotNull String type,
+    void log(@NotNull UUID sender, @Nullable String senderServer, @NotNull String senderWorld, @NotNull UUID receiver, @Nullable String receiverServer, @NotNull String receiverWorld, @NotNull String category, @NotNull String type,
              @Nullable JsonObject specification, @NotNull BigDecimal quantity) throws SQLException;
 
 }

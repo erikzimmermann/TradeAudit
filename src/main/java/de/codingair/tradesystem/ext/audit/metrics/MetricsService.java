@@ -12,6 +12,7 @@ import de.codingair.tradesystem.spigot.trade.gui.layout.registration.IconHandler
 import de.codingair.tradesystem.spigot.trade.gui.layout.types.impl.economy.EconomyIcon;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -37,24 +38,24 @@ public class MetricsService {
         }
     }
 
-    public void log(@NotNull UUID sender, @NotNull UUID receiver, @NotNull ItemStack item) {
+    public void log(@NotNull UUID sender, @Nullable String senderServer, @NotNull String senderWorld, @NotNull UUID receiver, @Nullable String receiverServer, @NotNull String receiverWorld, @NotNull ItemStack item) {
         if (repository == null) return;
 
         try {
-            repository.log(sender, receiver, "item", item.getType().name(), SpecificationUtils.getItemSpecification(sender, receiver, item), BigDecimal.valueOf(item.getAmount()));
+            repository.log(sender, senderServer, senderWorld, receiver, receiverServer, receiverWorld, "item", item.getType().name(), SpecificationUtils.getItemSpecification(sender, receiver, item), BigDecimal.valueOf(item.getAmount()));
         } catch (Exception e) {
             TradeAudit.getInstance().getLogger().severe("Failed to log metrics: " + e.getMessage());
         }
     }
 
-    public void log(@NotNull UUID sender, @NotNull UUID receiver, @NotNull EconomyIcon<?> icon) {
+    public void log(@NotNull UUID sender, @Nullable String senderServer, @NotNull String senderWorld, @NotNull UUID receiver, @Nullable String receiverServer, @NotNull String receiverWorld, @NotNull EconomyIcon<?> icon) {
         if (repository == null) return;
         if (icon.getValue().equals(icon.getDefault())) return;
 
         try {
             EditorInfo info = IconHandler.getInfo(icon.getClass());
 
-            repository.log(sender, receiver, "economy", info.getName(), null, icon.getValue());
+            repository.log(sender, senderServer, senderWorld, receiver, receiverServer, receiverWorld, "economy", info.getName(), null, icon.getValue());
         } catch (Exception e) {
             TradeAudit.getInstance().getLogger().severe("Failed to log metrics: " + e.getMessage());
         }
@@ -68,5 +69,4 @@ public class MetricsService {
                 new de.codingair.tradesystem.ext.audit.metrics.migrations.sqlite.CreateMetricsTableMigration()
         );
     }
-
 }
