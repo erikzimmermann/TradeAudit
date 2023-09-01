@@ -1,0 +1,1623 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_MYSQL",
+      "label": "MySQL",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "mysql",
+      "pluginName": "MySQL"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "barchart",
+      "name": "Bar chart",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "10.1.0"
+    },
+    {
+      "type": "datasource",
+      "id": "mysql",
+      "name": "MySQL",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "piechart",
+      "name": "Pie chart",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_MYSQL}"
+      },
+      "description": "The average duration of trades that were cancelled OR finished.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 1,
+          "mappings": [],
+          "noValue": "0.0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 0,
+        "y": 0
+      },
+      "id": 13,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^duration$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_MYSQL}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n    AVG(TIME_TO_SEC(TIMEDIFF(\r\n        t.timestamp, \r\n        (\r\n            SELECT timestamp \r\n            FROM ${database}.tradelog \r\n            WHERE timestamp <= t.timestamp AND t.player1 = player1 AND t.player2 = player2 AND message LIKE \"Trade started\" \r\n            ORDER BY timestamp DESC \r\n            LIMIT 1\r\n        )\r\n    ))) as duration\r\nFROM ${database}.tradelog as t\r\nWHERE $__timeFilter(t.timestamp) AND message IN (\"Trade cancelled\", \"Trade finished\") AND (LENGTH(\"$playerFilter\") = 2 OR player1 REGEXP \"${playerFilter:regex}\" OR player2 REGEXP \"${playerFilter:regex}\")",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Avg. trading duration",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_MYSQL}"
+      },
+      "description": "The average duration of trades that were finished.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 1,
+          "mappings": [],
+          "noValue": "0.0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 3,
+        "y": 0
+      },
+      "id": 11,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^duration$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_MYSQL}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n    AVG(TIME_TO_SEC(TIMEDIFF(\r\n        t.timestamp, \r\n        (\r\n            SELECT timestamp \r\n            FROM ${database}.tradelog \r\n            WHERE timestamp <= t.timestamp AND t.player1 = player1 AND t.player2 = player2 AND message LIKE \"Trade started\" \r\n            ORDER BY timestamp DESC \r\n            LIMIT 1\r\n        )\r\n    ))) as duration\r\nFROM ${database}.tradelog as t\r\nWHERE $__timeFilter(t.timestamp) AND message LIKE \"Trade finished\" AND (LENGTH(\"$playerFilter\") = 2 OR player1 REGEXP \"${playerFilter:regex}\" OR player2 REGEXP \"${playerFilter:regex}\")",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Avg. finish duration",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_MYSQL}"
+      },
+      "description": "The average duration of trades that were cancelled.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 1,
+          "mappings": [],
+          "noValue": "0.0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 6,
+        "y": 0
+      },
+      "id": 12,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^duration$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_MYSQL}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n    AVG(TIME_TO_SEC(TIMEDIFF(\r\n        t.timestamp, \r\n        (\r\n            SELECT timestamp \r\n            FROM ${database}.tradelog \r\n            WHERE timestamp <= t.timestamp AND t.player1 = player1 AND t.player2 = player2 AND message LIKE \"Trade started\" \r\n            ORDER BY timestamp DESC \r\n            LIMIT 1\r\n        )\r\n    ))) as duration\r\nFROM ${database}.tradelog as t\r\nWHERE $__timeFilter(t.timestamp) AND message LIKE \"Trade cancelled\" AND (LENGTH(\"$playerFilter\") = 2 OR player1 REGEXP \"${playerFilter:regex}\" OR player2 REGEXP \"${playerFilter:regex}\")",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Avg. cancel duration",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_MYSQL}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 9,
+        "y": 0
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_MYSQL}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH RECURSIVE series AS (\r\n    SELECT\r\n        0 as value,\r\n        $__timeFrom() as timestamp\r\n    UNION ALL\r\n    SELECT\r\n        0 as value,\r\n        TIMESTAMPADD(MINUTE, 5, timestamp)\r\n    FROM series\r\n    WHERE\r\n        timestamp <= CAST($__timeTo() AS DATETIME)\r\n)\r\nSELECT (series.value + IFNULL(nested.value, 0)) as \"#Trades started\", $__timeGroup(series.timestamp,'5m') as time\r\nFROM series \r\nLEFT JOIN (\r\n    SELECT SUM(1) as value, timestamp \r\n    FROM ${database}.tradelog \r\n    WHERE message LIKE \"Trade started\" AND (LENGTH(\"$playerFilter\") = 2 OR player1 REGEXP \"${playerFilter:regex}\" OR player2 REGEXP \"${playerFilter:regex}\")\r\n    GROUP BY $__timeGroup(timestamp,'5m')\r\n) AS nested \r\nON $__timeGroup(series.timestamp,'5m') = $__timeGroup(nested.timestamp,'5m') \r\nGROUP BY $__timeGroup(series.timestamp,'5m')",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Trades started",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_MYSQL}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "orange",
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "amount"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 5,
+        "x": 14,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "displayLabels": [
+          "value"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": []
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^amount$/",
+          "limit": 25,
+          "values": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "asc"
+        }
+      },
+      "pluginVersion": "10.0.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_MYSQL}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT type, SUM(quantity) AS amount\r\nFROM ${database}.trade_metrics AS m\r\nLEFT JOIN ${database}.trade_players AS p ON m.sender = p.id\r\nWHERE $__timeFilter(date) AND category LIKE \"item\" AND (LENGTH(\"$playerFilter\") = 2 OR name REGEXP \"${playerFilter:regex}\")\r\nGROUP BY type\r\nORDER BY quantity DESC",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Most traded items",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_MYSQL}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 5,
+        "x": 19,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "displayLabels": [
+          "value"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^amount$/",
+          "limit": 20,
+          "values": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "asc"
+        }
+      },
+      "pluginVersion": "10.0.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_MYSQL}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \r\n    type,\r\n    SUM(\r\n        CASE \r\n            WHEN type = 'Exp level icon' THEN\r\n                CASE \r\n                    WHEN quantity < 353 THEN SQRT(quantity + 9) - 3\r\n                    WHEN quantity < 1508 THEN 8.1 + SQRT(0.4 * (quantity - 195.975))\r\n                    ELSE 325 / 18 + SQRT(2 / 9 * (quantity - 54215 / 72))\r\n                END\r\n            ELSE quantity\r\n        END\r\n    ) AS amount\r\nFROM ${database}.trade_metrics AS m\r\nLEFT JOIN ${database}.trade_players AS p ON m.sender = p.id\r\nWHERE $__timeFilter(date) AND category LIKE 'economy' AND (LENGTH(\"$playerFilter\") = 2 OR name REGEXP \"${playerFilter:regex}\")\r\nGROUP BY type;\r\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Most traded economy",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_MYSQL}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "#Trades cancelled"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "#Trades finished"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 10,
+        "x": 0,
+        "y": 4
+      },
+      "hideTimeOverride": false,
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_MYSQL}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "WITH RECURSIVE series AS (\r\n  SELECT\r\n    0 as value,\r\n    $__timeFrom() as timestamp\r\n  UNION\r\n  ALL\r\n  SELECT\r\n    0 as value,\r\n    TIMESTAMPADD(MINUTE, 5, timestamp)\r\n  FROM\r\n    series\r\n  WHERE\r\n    timestamp <= CAST($__timeTo() AS DATETIME)\r\n)\r\nSELECT\r\n  (series.value + IFNULL(nested.value, 0)) as \"#Trades cancelled\",\r\n  $__timeGroup(series.timestamp, '5m') as time\r\nFROM\r\n  series\r\n  LEFT JOIN (\r\n    SELECT\r\n      SUM(1) as value,\r\n      timestamp\r\n    FROM\r\n      ${database}.tradelog\r\n    WHERE\r\n      message LIKE \"Trade cancelled\"\r\n      AND (\r\n        LENGTH(\"$playerFilter\") = 2\r\n        OR player1 REGEXP \"${playerFilter:regex}\"\r\n        OR player2 REGEXP \"${playerFilter:regex}\"\r\n      )\r\n    GROUP BY\r\n      $__timeGroup(timestamp, '5m')\r\n  ) AS nested ON $__timeGroup(series.timestamp, '5m') = $__timeGroup(nested.timestamp, '5m')\r\nGROUP BY\r\n  $__timeGroup(series.timestamp, '5m')",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_MYSQL}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH RECURSIVE series AS (\r\n  SELECT\r\n    0 as value,\r\n    $__timeFrom() as timestamp\r\n  UNION\r\n  ALL\r\n  SELECT\r\n    0 as value,\r\n    TIMESTAMPADD(MINUTE, 5, timestamp)\r\n  FROM\r\n    series\r\n  WHERE\r\n    timestamp <= CAST($__timeTo() AS DATETIME)\r\n)\r\nSELECT\r\n  (series.value + IFNULL(nested.value, 0)) as \"#Trades finished\",\r\n  $__timeGroup(series.timestamp, '5m') as time\r\nFROM\r\n  series\r\n  LEFT JOIN (\r\n    SELECT\r\n      SUM(1) as value,\r\n      timestamp\r\n    FROM\r\n      ${database}.tradelog\r\n    WHERE\r\n      message LIKE \"Trade finished\"\r\n      AND (\r\n        LENGTH(\"$playerFilter\") = 2\r\n        OR player1 REGEXP \"${playerFilter:regex}\"\r\n        OR player2 REGEXP \"${playerFilter:regex}\"\r\n      )\r\n    GROUP BY\r\n      $__timeGroup(timestamp, '5m')\r\n  ) AS nested ON $__timeGroup(series.timestamp, '5m') = $__timeGroup(nested.timestamp, '5m')\r\nGROUP BY\r\n  $__timeGroup(series.timestamp, '5m')",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Current trades",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_MYSQL}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Trade finished"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Trade cancelled"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Trades cancelled"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Trades finished"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 2,
+        "x": 10,
+        "y": 4
+      },
+      "id": 5,
+      "options": {
+        "displayLabels": [
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.0.3",
+      "targets": [
+        {
+          "dataset": "tradesystem",
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_MYSQL}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT IF(message LIKE \"Trade finished\", \"Trades finished\", \"Trades cancelled\"), COUNT(*) as value \r\nFROM ${database}.tradelog \r\nWHERE $__timeFilter(timestamp) AND (message LIKE \"Trade finished\" OR message LIKE \"Trade cancelled\") AND (LENGTH(\"$playerFilter\") = 2 OR player1 REGEXP \"${playerFilter:regex}\" OR player2 REGEXP \"${playerFilter:regex}\")\r\nGROUP BY message",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "tradelog"
+        }
+      ],
+      "title": "Cancel/Finish ratio",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_MYSQL}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 10,
+        "x": 14,
+        "y": 7
+      },
+      "id": 6,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 1,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true
+        },
+        "orientation": "horizontal",
+        "showValue": "never",
+        "stacking": "none",
+        "text": {},
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xField": "player",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "10.0.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_MYSQL}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT name as player, uuid, type as item, SUM(quantity) as amount, IFNULL(specification, \"{}\") as specification\r\nFROM ${database}.trade_metrics as m \r\nLEFT JOIN ${database}.trade_players as p ON m.sender = p.id \r\nWHERE $__timeFilter(date) AND category LIKE \"item\" AND (LENGTH(\"$playerFilter\") = 2 OR name REGEXP \"${playerFilter:regex}\")\r\nGROUP BY sender, type, specification\r\nORDER BY SUM(quantity) DESC, name ASC, type ASC\r\nLIMIT 15",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Most trading players (items, offering)",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_MYSQL}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "bukkit"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#afafaf",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 3,
+        "x": 0,
+        "y": 12
+      },
+      "id": 10,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "/^value$/",
+          "values": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.0.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_MYSQL}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT CONCAT(sender_world, IF(sender_server IS NULL, \"\", CONCAT(\" (\", sender_server, \")\"))) AS world, SUM(1) as value\r\nFROM ${database}.trade_metrics AS m\r\nLEFT JOIN ${database}.trade_players AS p ON m.sender = p.id\r\nWHERE $__timeFilter(date) AND (LENGTH(\"$playerFilter\") = 2 OR name REGEXP \"${playerFilter:regex}\")\r\nGROUP BY sender_server, sender_world",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Trading worlds (offering)",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_MYSQL}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "bukkit"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#afafaf",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 3,
+        "x": 3,
+        "y": 12
+      },
+      "id": 15,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "/^value$/",
+          "values": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.0.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_MYSQL}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT CONCAT(receiver_world, IF(receiver_server IS NULL, \"\", CONCAT(\" (\", receiver_server, \")\"))) AS world, SUM(1) as value\r\nFROM ${database}.trade_metrics AS m\r\nLEFT JOIN ${database}.trade_players AS p ON m.receiver = p.id\r\nWHERE $__timeFilter(date) AND (LENGTH(\"$playerFilter\") = 2 OR name REGEXP \"${playerFilter:regex}\")\r\nGROUP BY receiver_server, receiver_world",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Trading worlds (receiving)",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_MYSQL}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "bukkit"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#afafaf",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 3,
+        "x": 6,
+        "y": 12
+      },
+      "id": 9,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "/^value$/",
+          "values": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.0.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_MYSQL}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT IFNULL(sender_server, \"bukkit\") AS server, SUM(1) as value\r\nFROM ${database}.trade_metrics AS m\r\nLEFT JOIN ${database}.trade_players AS p ON m.sender = p.id\r\nWHERE $__timeFilter(date) AND (LENGTH(\"$playerFilter\") = 2 OR name REGEXP \"${playerFilter:regex}\")\r\nGROUP BY sender_server",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Trading servers (offering)",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_MYSQL}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "bukkit"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#afafaf",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 3,
+        "x": 9,
+        "y": 12
+      },
+      "id": 16,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "/^value$/",
+          "values": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.0.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_MYSQL}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT IFNULL(receiver_server, \"bukkit\") AS server, SUM(1) as value\r\nFROM ${database}.trade_metrics AS m\r\nLEFT JOIN ${database}.trade_players AS p ON m.sender = p.id\r\nWHERE $__timeFilter(date) AND (LENGTH(\"$playerFilter\") = 2 OR name REGEXP \"${playerFilter:regex}\")\r\nGROUP BY receiver_server",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Trading servers (receiving)",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "${DS_MYSQL}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 10,
+        "x": 14,
+        "y": 14
+      },
+      "id": 14,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 1,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true
+        },
+        "orientation": "horizontal",
+        "showValue": "never",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xField": "player",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "10.0.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "${DS_MYSQL}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT name as player, uuid, type, \r\n    IF(${playereconomyfilter} LIKE \"#included in trades\", \r\n        COUNT(*), \r\n        SUM(\r\n            CASE \r\n                WHEN type = 'Exp level icon' THEN\r\n                    CASE \r\n                        WHEN quantity < 353 THEN SQRT(quantity + 9) - 3\r\n                        WHEN quantity < 1508 THEN 8.1 + SQRT(0.4 * (quantity - 195.975))\r\n                        ELSE 325 / 18 + SQRT(2 / 9 * (quantity - 54215 / 72))\r\n                    END\r\n                ELSE quantity\r\n            END\r\n        )\r\n    ) as ${playereconomyfilter},\r\n    CASE \r\n        WHEN ${playereconomyfilter} LIKE \"Exp level icon\" THEN\r\n            \"#levels traded\"\r\n        WHEN ${playereconomyfilter} LIKE \"#included in trades\" THEN\r\n            \"The number of trades that include offers with this economy type.\"\r\n        ELSE \"-\"\r\n    END as \"description\"\r\nFROM ${database}.trade_metrics as m \r\nLEFT JOIN ${database}.trade_players as p ON m.sender = p.id \r\nWHERE $__timeFilter(date) AND category LIKE \"economy\" AND (LENGTH(\"$playerFilter\") = 2 OR name REGEXP \"${playerFilter:regex}\")\r\nGROUP BY sender, type\r\nORDER BY SUM(quantity) DESC\r\nLIMIT 15",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Most trading players (economy, offering)",
+      "type": "barchart"
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "MySQL",
+          "value": "da87ad30-70dc-4d43-ac85-3e54cf6f89c2"
+        },
+        "description": "The database that should be used. This is configured in the main TradeSystem config and by default \"TradeSystem\".",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Data Source",
+        "multi": false,
+        "name": "datasource",
+        "options": [],
+        "query": "mysql",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "tradesystem",
+          "value": "tradesystem"
+        },
+        "description": "The database that should be used. This is configured in the main TradeSystem config and by default \"TradeSystem\".",
+        "hide": 0,
+        "label": "Database",
+        "name": "database",
+        "options": [
+          {
+            "selected": true,
+            "text": "tradesystem",
+            "value": "tradesystem"
+          }
+        ],
+        "query": "tradesystem",
+        "skipUrlSync": false,
+        "type": "textbox"
+      },
+      {
+        "allValue": "'#included in trades'",
+        "current": {},
+        "datasource": {
+          "type": "mysql",
+          "uid": "${DS_MYSQL}"
+        },
+        "definition": "SELECT DISTINCT(type) FROM ${database}.trade_metrics WHERE $__timeFilter(date) AND category LIKE \"economy\"",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Player Economy Filter",
+        "multi": false,
+        "name": "playereconomyfilter",
+        "options": [],
+        "query": "SELECT DISTINCT(type) FROM ${database}.trade_metrics WHERE $__timeFilter(date) AND category LIKE \"economy\"",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": "''",
+        "current": {},
+        "datasource": {
+          "type": "mysql",
+          "uid": "${DS_MYSQL}"
+        },
+        "definition": "SELECT name FROM ${database}.trade_players\nUNION\nSELECT player1 FROM ${database}.tradelog\nUNION\nSELECT player2 FROM ${database}.tradelog",
+        "description": "Searches for given players in player-related metrics.",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Player Filter",
+        "multi": true,
+        "name": "playerFilter",
+        "options": [],
+        "query": "SELECT name FROM ${database}.trade_players\nUNION\nSELECT player1 FROM ${database}.tradelog\nUNION\nSELECT player2 FROM ${database}.tradelog",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-12h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "TradeSystem",
+  "uid": "f1eb572c-9821-4d89-b951-f7300714597f",
+  "version": 25,
+  "weekStart": ""
+}
