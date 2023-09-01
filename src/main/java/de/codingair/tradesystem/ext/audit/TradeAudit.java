@@ -14,6 +14,7 @@ import de.codingair.tradesystem.ext.audit.listeners.TradeStartListener;
 import de.codingair.tradesystem.ext.audit.listeners.UpdateListener;
 import de.codingair.tradesystem.ext.audit.metrics.MetricsListener;
 import de.codingair.tradesystem.ext.audit.metrics.MetricsService;
+import de.codingair.tradesystem.ext.audit.utils.GrafanaUtils;
 import de.codingair.tradesystem.ext.audit.utils.Permissions;
 import de.codingair.tradesystem.spigot.TradeSystem;
 import de.codingair.tradesystem.spigot.utils.Lang;
@@ -27,6 +28,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -51,7 +53,7 @@ public class TradeAudit extends JavaPlugin {
 
         startUpdateNotifier();
 
-        loadConfigFiles();
+        loadFiles();
         loadServices();
         loadCommands();
         loadListeners();
@@ -65,8 +67,13 @@ public class TradeAudit extends JavaPlugin {
         if (instance != null) API.getInstance().onDisable(this);
     }
 
-    private void loadConfigFiles() {
+    private void loadFiles() {
         Lang.init(this, fileManager);
+        try {
+            GrafanaUtils.createFiles(this);
+        } catch (IOException e) {
+            getLogger().warning("Could not create grafana files: " + e.getMessage());
+        }
     }
 
     private void loadServices() {

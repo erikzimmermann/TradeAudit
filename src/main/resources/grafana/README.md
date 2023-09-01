@@ -56,6 +56,6 @@ If you encounter any issues or have questions regarding the TradeAudit Grafana d
 
 ## License
 
-This TradeAudit Grafana Dashboard is licensed under the [Minecraft Plugin License](../../../../LICENSE).
+This TradeAudit Grafana Dashboard is licensed under the [Minecraft Plugin License](https://github.com/erikzimmermann/TradeAudit/blob/develop/LICENSE).
 
 Happy monitoring and auditing!
