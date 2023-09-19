@@ -1,5 +1,6 @@
 Command_Audit: '&7Use: /audit <start, mute, unmute>'
 Command_Audit_Start: '&7Use: /audit start <player>'
+Command_TradeLog: '&7Use &e/%label% <name>'
 Not_Trading: '&7This player is &cnot trading&7.'
 Audit_GUI_Title: '&8Auditing &c%player1% &8& &c%player2%%countdown%'
 Audit_Notification: '&7The players &c%player1% &7and &c%player2% &7are trading now &8(%audit%&7, %mute%&8)&7.'

@@ -1,5 +1,6 @@
 Command_Audit: '&7使用: /audit <start, mute, unmute>'
 Command_Audit_Start: '&7使用: /audit start <玩家>'
+Command_TradeLog: "&7使用  &e/%label% <name>"
 Not_Trading: '&7此玩家未在交易.'
 Audit_GUI_Title: '&8正在审计 &c%player1% &8和 &c%player2%%countdown%'
 Audit_Notification: '&7玩家 &c%player1% &7和 &c%player2% &7正在交易中 &8(%audit%&7, %mute%&8)&7.'

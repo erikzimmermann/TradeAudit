@@ -1,5 +1,6 @@
 Command_Audit: '&7Použití: /audit <start, mute, unmute>'
 Command_Audit_Start: '&7Použití: /audit start <hráč>'
+Command_TradeLog: '&7Zadej &e/%label% <jméno>'
 Not_Trading: '&7Tento hráč momentálně &cneobchoduje&7.'
 Audit_GUI_Title: '&8Auditování &c%player1% &8& &c%player2%%countdown%'
 Audit_Notification: '&7Hráči &c%player1% &7a &c%player2% &7momentálně obchodují &8(%audit%&7, %mute%&8)&7.'

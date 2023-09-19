@@ -1,5 +1,6 @@
 Command_Audit: '&7Использование: /audit <start, mute, unmute>'
 Command_Audit_Start: '&7Использование: /audit start <игрок>'
+Command_TradeLog: '&7Использование: &e/%label% <name>'
 Not_Trading: '&7Этот игрок &cне торгует&7.'
 Audit_GUI_Title: '&8Аудит &c%player1% &8& &c%player2%%countdown%'
 Audit_Notification: '&7Игроки &c%player1% &7и &c%player2% &7сейчас торгуют &8(%audit%&7, %mute%&8)&7.'

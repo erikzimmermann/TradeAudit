@@ -1,5 +1,6 @@
 Command_Audit: '&7Sử dụng: /audit <start, mute, unmute>'
 Command_Audit_Start: '&7Sử dụng: /audit start <người chơi>'
+Command_TradeLog: '&7Dùng &e/%label% <name>'
 Not_Trading: '&7Người chơi này &ckhông thực hiện giao dịch&7.'
 Audit_GUI_Title: '&8Đang kiểm tra &c%player1% &8& &c%player2%%countdown%'
 Audit_Notification: '&7Người chơi &c%player1% &7và &c%player2% &7đang thực hiện giao dịch &8(%audit%&7, %mute%&8)&7.'

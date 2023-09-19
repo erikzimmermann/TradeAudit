@@ -6,6 +6,7 @@ import de.codingair.codingapi.API;
 import de.codingair.codingapi.files.FileManager;
 import de.codingair.codingapi.utils.Value;
 import de.codingair.tradesystem.ext.audit.commands.CAudit;
+import de.codingair.tradesystem.ext.audit.commands.CTradeLog;
 import de.codingair.tradesystem.ext.audit.external.PluginDependencies;
 import de.codingair.tradesystem.ext.audit.guis.AuditGUI;
 import de.codingair.tradesystem.ext.audit.listeners.TradeCloseListener;
@@ -82,6 +83,7 @@ public class TradeAudit extends JavaPlugin {
 
     private void loadCommands() {
         new CAudit().register();
+        new CTradeLog().register();
     }
 
     private void loadListeners() {

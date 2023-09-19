@@ -1,6 +1,5 @@
 package de.codingair.tradesystem.ext.audit.commands;
 
-import de.codingair.codingapi.player.chat.SimpleMessage;
 import de.codingair.codingapi.player.gui.inventory.v2.exceptions.AlreadyOpenedException;
 import de.codingair.codingapi.player.gui.inventory.v2.exceptions.IsWaitingException;
 import de.codingair.codingapi.player.gui.inventory.v2.exceptions.NoPageException;

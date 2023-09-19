@@ -1,5 +1,6 @@
 Command_Audit: '&7Utilisation : /audit <start, mute, unmute>'
 Command_Audit_Start: '&7Utilisation : /audit start <joueur>'
+Command_TradeLog: '"&7Utilisation &e/%label% <name>'
 Not_Trading: "&7Ce joueur ne fait &cpas d'échanges&7."
 Audit_GUI_Title: "&8Vérification de l'échange entre &c%player1% &8et &c%player2%%countdown%"
 Audit_Notification: '&7Les joueurs &c%player1% &7et &c%player2% &7font des échanges maintenant &8(%audit%&7, %mute%&8)&7.'
