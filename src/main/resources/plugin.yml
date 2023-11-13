@@ -19,3 +19,14 @@ permissions:
   tradesystem.audit.start:
     default: op
     description: "Enable admins to use the /audit command."
+  tradesystem.audit.stats:
+    default: op
+    description: "Enable admins to use the /tradelog command."
+  tradesystem.audit.*:
+    default: op
+    description: "Enable admins to use all futures."
+    children:
+      tradesystem.audit.notify: true
+      tradesystem.audit.start: true
+      tradesystem.audit.stats: true
+      tradesystem.audit.updates.notify: true

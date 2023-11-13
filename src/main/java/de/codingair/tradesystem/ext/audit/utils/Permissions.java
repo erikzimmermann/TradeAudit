@@ -17,6 +17,10 @@ public enum Permissions {
      * Enable admins to use the /audit command.
      */
     TRADE_AUDIT("tradesystem.audit.start", true),
+    /**
+     * Enable admins to use the /tradelog command.
+     */
+    STATS("tradesystem.audit.stats", true),
     ;
 
     private final String permission;

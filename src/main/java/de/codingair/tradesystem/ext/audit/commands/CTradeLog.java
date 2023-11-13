@@ -5,6 +5,7 @@ import de.codingair.codingapi.server.commands.builder.CommandBuilder;
 import de.codingair.codingapi.server.commands.builder.CommandComponent;
 import de.codingair.codingapi.server.commands.builder.special.MultiCommandComponent;
 import de.codingair.tradesystem.ext.audit.TradeAudit;
+import de.codingair.tradesystem.ext.audit.utils.Permissions;
 import de.codingair.tradesystem.spigot.TradeSystem;
 import de.codingair.tradesystem.spigot.extras.tradelog.TradeLog;
 import de.codingair.tradesystem.spigot.extras.tradelog.TradeLogService;
@@ -22,7 +23,7 @@ public class CTradeLog extends CommandBuilder {
     static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm:ss");
 
     public CTradeLog() {
-        super(TradeAudit.getInstance(), "tradelog", new BaseComponent() {
+        super(TradeAudit.getInstance(), "tradelog", new BaseComponent(Permissions.STATS.getPermission()) {
             @Override
             public void noPermission(CommandSender sender, String s, CommandComponent commandComponent) {
                 sender.sendMessage(Lang.getPrefix() + Lang.get("No_Permissions"));
