@@ -7,6 +7,14 @@
     <groupId>de.codingair</groupId>
     <artifactId>TradeAudit</artifactId>
     <version>2.5.2</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>TradeAudit-Bundle</module>
+        <module>TradeAudit-Spigot</module>
+        <module>TradeSystem/TradeSystem-Packets</module>
+        <module>TradeSystem/TradeSystem-Spigot</module>
+    </modules>
 
     <properties>
         <tradesystem.version>2.5.2_Hotfix-1</tradesystem.version>
@@ -16,128 +24,33 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
-    <build>
-        <finalName>TradeAudit_v${project.version}</finalName>
-
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.3</version>
-
-                <configuration>
-                    <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
-                    <relocations>
-                        <relocation>
-                            <pattern>de.codingair.codingapi</pattern>
-                            <shadedPattern>de.codingair.tradesystem.lib.codingapi</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>de.codingair.packetmanagement</pattern>
-                            <shadedPattern>de.codingair.tradesystem.lib.packetmanagement</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.bstats</pattern>
-                            <shadedPattern>de.codingair.tradesystem.lib.bstats</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.intellij</pattern>
-                            <shadedPattern>de.codingair.tradesystem.lib.intellij</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.jetbrains</pattern>
-                            <shadedPattern>de.codingair.tradesystem.lib.jetbrains</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>com.google.gson</pattern>
-                            <shadedPattern>de.codingair.tradesystem.lib.gson</shadedPattern>
-                        </relocation>
-                    </relocations>
-                </configuration>
-
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-
-        <resources>
-            <resource>
-                <directory>${basedir}/src/main/resources</directory>
-                <targetPath>.</targetPath>
-                <filtering>true</filtering>
-                <includes>
-                    <include>*</include>
-                    <include>*/**</include>
-                </includes>
-            </resource>
-        </resources>
-    </build>
-
     <repositories>
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
-        <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
     </repositories>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.20-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.CodingAir</groupId>
-            <artifactId>CodingAPI</artifactId>
-            <version>1.73</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.CodingAir</groupId>
-            <artifactId>PacketManagement</artifactId>
-            <version>1.18</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>TradeSystem-Spigot</artifactId>
-            <version>${tradesystem.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- provided by TradeSystem -->
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.10.1</version>
-            <scope>provided</scope>
-        </dependency>
-
-
-        <!-- Both dependencies are required for MMOItems -->
-        <dependency>
-            <groupId>net.Indyuce</groupId>
-            <artifactId>MMOItems-API</artifactId>
-            <version>6.9.2-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.lumine</groupId>
-            <artifactId>MythicLib-dist</artifactId>
-            <version>1.6-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
-
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.github.CodingAir</groupId>
+                <artifactId>CodingAPI</artifactId>
+                <version>1.76</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.github.CodingAir</groupId>
+                <artifactId>PacketManagement</artifactId>
+                <version>1.18</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>TradeSystem-Spigot</artifactId>
+                <version>${tradesystem.version}</version>
+                <scope>provided</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>
