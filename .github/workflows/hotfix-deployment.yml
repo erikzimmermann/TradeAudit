@@ -25,7 +25,7 @@ jobs:
     - name: Deploy
       run: |
         rank="<@&793495434235609138>"
-        milestone=1
+        milestone=2
         
         upload() {
             file=$(find "./TradeAudit-Bundle/target" -type f -name "TradeAudit_v*.jar" | head -n 1)
