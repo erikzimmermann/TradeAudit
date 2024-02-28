@@ -41,6 +41,6 @@ public enum Permissions {
 
     public boolean hasPermission(@NotNull Player player) {
         if (de.codingair.tradesystem.spigot.utils.Permissions.arePermissionsEnabled()) return player.hasPermission(permission);
-        else return !admin;
+        else return !admin || player.isOp();
     }
 }
