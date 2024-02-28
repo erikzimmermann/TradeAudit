@@ -6,7 +6,7 @@
 
     <groupId>de.codingair</groupId>
     <artifactId>TradeAudit</artifactId>
-    <version>2.5.2</version>
+    <version>2.5.3</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -17,7 +17,7 @@
     </modules>
 
     <properties>
-        <tradesystem.version>2.5.2_Hotfix-1</tradesystem.version>
+        <tradesystem.version>2.5.3</tradesystem.version>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
